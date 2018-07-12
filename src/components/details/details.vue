@@ -1,7 +1,8 @@
 <template>
     <transition name="fade">
         <div v-show="showFlag" class="details">
-            <div>
+            <div
+            >
                 <header class="header">
                     <header class="bar bar-nav" @click="hide">
                         <div class="pull-left">
@@ -10,7 +11,10 @@
                         <div class="title">{{detailsData.publishedAt || time | formatDate}}</div>
                     </header>
                 </header>
-                <v-day :data="detailsData" ref="day"></v-day>
+                <v-scroll-view          
+                    ref="content">
+                    <v-day :data="detailsData" ref="day"></v-day>
+                </v-scroll-view>
             </div>
         </div>
     </transition>
@@ -18,6 +22,7 @@
 <script>
     import { formatDate } from '../../common/js/date';
     import BScroll from 'better-scroll';
+    import vScrollView from '../scroll-view/scroll-view';
     import vDay from '../day/day.vue';
     export default {
         name: 'v-details',
@@ -39,16 +44,17 @@
         methods: {
             show() {
                 this.showFlag = true;
-                this.$nextTick(() => {
+                setTimeout(() => {
                     if (!this.scroll) {
-                        this.scroll = new BScroll(this.$el, {
+                        this.scroll = new BScroll(this.$refs.content.$el, {
                             click: true
                         });
                     } else {
                         this.scroll.refresh();
                     }
+                    this.scroll.scrollTo(0, 0);
                     this.$refs.day.clearStyle();
-                });
+                }, 0);
             },
             hide() {
                 this.showFlag = false;
@@ -61,13 +67,13 @@
             }
         },
         components: {
-            vDay
+            vDay,
+            vScrollView
         }
     };
 </script>
 
 
 <style lang="stylus" rel="stylesheet/stylus">
-    @import './details.styl';
-    
+    @import './details.styl';      
 </style>
